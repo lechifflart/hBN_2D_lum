@@ -2,13 +2,12 @@ import numpy as np
 
 def ypp_output_parser(file,exc_range):
     # parse ypp output file
-    # returns exciton interpolated energies on finer Grid
+    # returns exciton interpolated energies on matdyn output grid
     #
     with open(file) as f:
         data = np.genfromtxt(fname=file,comments='#')
-    qtilde = data[:,-3:]
-    print("[WARNING] : this function will parse the q-grid several times\n \t you should check they are all the same")
-    exc_nrg = data[:,exc_range[0]:exc_range[1]+1]
+    qtilde = data[:3,:]
+    exc_nrg = data[3:,:]
 
     return(qtilde,exc_nrg)
 
