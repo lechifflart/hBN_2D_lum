@@ -10,17 +10,17 @@ np.set_printoptions(threshold=sys.maxsize)
 # define qtilde_grid (or get it from matdyn ??)
 
 # parse matdyn output
-q_matdyn, freq_matdyn = matdyn_freq_parser()
+q_matdyn, freq_matdyn = matdyn_freq_parser('test_data/matdyn_dbg.freq')
 
 # parse ypp output for the excitons energies interpolated on the matdyn fine grid
-list_of_points_to_expand, list_of_exc_nrgs = ypp_matdyn_parser('/home/lechifflart/hBN_2D/test_code/test_data/o.excitons-1-9_grid9x9',[1,9])
+qtilde_dbg, exc_beta_dbg = ypp_matdyn_parser('/home/lechifflart/hBN_2D/test_code/test_data/o.excitons-1-9_grid9x9',[1,9])
 
-# visualize which points are selected
-car_uniques = red_car(uniques,lat.lat)
-car_ibz = red_car(list_of_points_to_expand,lat.lat)
-plt.scatter(list_of_points_to_expand[:,0],list_of_points_to_expand[:,1])
-plt.scatter(uniques[:,0],uniques[:,1],marker='+',s = 80)
-plt.show()
+# # visualize which points are selected
+# car_uniques = red_car(uniques,lat.lat)
+# car_ibz = red_car(list_of_points_to_expand,lat.lat)
+# plt.scatter(list_of_points_to_expand[:,0],list_of_points_to_expand[:,1])
+# plt.scatter(uniques[:,0],uniques[:,1],marker='+',s = 80)
+# plt.show()
 
 #
 # find all qtilde points around each Q point (from BSE)
@@ -31,7 +31,8 @@ exc_a = data_BSE[:,1:3]
 qBSE = data_BSE[:,-3:]
     # get the FBZ original Q grid
 for QQ in qBSE :
-    print(QQ)
+    if QQ in qtilde_dbg :
+        print(QQ)
 
 # analytic fit around Q = 0
 

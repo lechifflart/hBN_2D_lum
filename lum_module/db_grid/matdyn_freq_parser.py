@@ -17,7 +17,7 @@ def matdyn_freq_parser(file):
     frequencies = np.empty([nb_modes_k[1],nb_modes_k[0]])
 
     step = -(nb_modes_k[0]//-6)  # ceiling division ; frequencies are at most 6 by line
-    print(step)
+
     for i in range(1,len(lines)-step,step+1):
         q_index = i//(step+1)
         q_tilde[q_index]=np.array([float(x) for x in lines[i].split()])

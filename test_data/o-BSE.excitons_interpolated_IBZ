@@ -1,0 +1,46 @@
+#                                                                     
+#  ____  ____     _       ____    ____  ______      ___               
+# |_  _||_  _|   / \     |_   \  /   _||_   _ \   ."   `.             
+#   \ \  / /    / _ \      |   \/   |    | |_) | /  .-.  \            
+#    \ \/ /    / ___ \     | |\  /| |    |  __". | |   | |            
+#    _|  |_  _/ /   \ \_  _| |_\/_| |_  _| |__) |\  `-"  /            
+#   |______||____| |____||_____||_____||_______/  `.___."             
+#                                                                     
+#                                                                     
+#                                                                     
+# Version 5.1.0 Revision 21149 Hash (prev commit) fa9c337d7           
+#                   Branch is bug-fixes                               
+#          MPI+OpenMP+SLK+SLEPC+HDF5_MPI_IO Build                     
+#                http://www.yambo-code.org                            
+#
+#     |q| (a.u.)         e1                 e2                q_x (rlu)          q_y (rlu)          q_z (rlu)
+#
+     -0.23113496E-15     -1.1538589         -1.1458687          0.0000000          0.0000000          0.0000000    
+      0.516271770         1.32726526         1.80865443         0.00000000        0.333333343         0.00000000   
+      0.894208789        -1.10999906        0.845807567E-1     0.333333284        0.333333313         0.00000000   
+# 
+# 01/27/2022 at 18:55 ypp @ rosa.cinam.univ-mrs.fr [start]
+# 01/27/2022 at 18:55                              [end]
+#
+# .-Input file  ypp.in_exc
+# | excitons                         # [R] Excitonic properties
+# | interpolate                      # [R] Interpolate
+# | ListPts                        #  List the internal q/k points also in the parser format
+# | INTERP_mode= "BOLTZ"             # Interpolation mode (NN=nearest point, BOLTZ=boltztrap aproach)
+# | INTERP_Shell_Fac= 20.00000       # The bigger it is a higher number of shells is used
+# | INTERP_NofNN= 1                  # Number of Nearest sites in the NN method
+# | BANDS_steps= 10                  # Number of divisions
+# | cooIn= "rlu"                     # Points coordinates (in) cc/rlu/iku/alat
+# | cooOut= "rlu"                    # Points coordinates (out) cc/rlu/iku/alat
+# | States= "1 - 2"                  # Index of the BS state(s)
+# | % INTERP_Grid
+# |  3 | 3 | 1 |                             # Interpolation BZ Grid
+# | %
+# | #PrtDOS                        # Print Exciton Density of States
+# | % DOSERange
+# |  1.000000 |-1.000000 |         eV    # Energy range
+# | %
+# | DOSESteps=  500                  # Energy steps
+# | DOS_broad= 0.100000        eV    # Broadening of the DOS
+# | %BANDS_kpts                      # K points of the bands circuit
+# | %

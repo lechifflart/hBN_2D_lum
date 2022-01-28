@@ -1,11 +1,11 @@
 import numpy as np
 
-def ypp_output_parser(file,exc_range):
+def ypp_matdyn_parser(file,exc_range):
     # parse ypp output file
     # returns exciton interpolated energies on matdyn output grid
     #
     with open(file) as f:
-        data = np.genfromtxt(fname=file,comments='#')
+        data = np.genfromtxt(fname=f,comments='#')
     qtilde = data[:3,:]
     exc_nrg = data[3:,:]
 
