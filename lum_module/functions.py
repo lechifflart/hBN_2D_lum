@@ -7,7 +7,7 @@ def chi_res_static(omega,strength,eig):
         chi+= strength[alpha] / (omega - eig[alpha] + 1j*broadening)
     return(chi)
 
-def renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,Nq,Gkkp_sq):
+def renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,Nq,Gkkp_sq,energy_denominators,db_grid=True):
     # arguments : phonon frequencies, energies of incoming excitons, " of scattered excitons, nb of q points, exc-ph matrix elmts squared
     # to be at Gamma, iq1 = 0
     nb_a = len(eig_a)
@@ -20,7 +20,10 @@ def renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,Nq,Gkkp_sq):
         for alpha in range(nb_a-1):
             dummy_sum=0.
             for mu in range(phfreq_indx[0],phfreq_indx[1]):
-                dummy_sum += np.sum(Gkkp_sq[mu,:,alpha] / (eig_b[:]-eig_a[alpha]+ph_freq[mu])**2)
+                if not db_grid :
+                    dummy_sum += np.sum(Gkkp_sq[mu,:,alpha] / (eig_b[:]-eig_a[alpha]+ph_freq[mu])**2)
+                else :
+                    dummy_sum += np.sum(Gkkp_sq[mu,:,alpha] / energy_denominators[mu,:])
                 #print('ph_freq',ph_freq[mu]**2)
                 #print('Gkkp_sq',Gkkp_sq[mu,:2,alpha])
                 #print('dummy_sum',dummy_sum)

@@ -53,8 +53,7 @@ def double_grid_driver(QQ,matdyn_freq_file,ypp_matdyn_file,exc_QQ_alpha,exc_beta
 
         analytic_fit_params = interpolate(QBSE_fit,exc1_fitQ,exc2_fitQ,quad,lin)
 
-
-    # create an array with qtilde, Ebeta and phonon freq
+    # check if all qtilde are the same
     if not np.array(lattice.point_matching(qtilde_dbg,q_matdyn,double_check=False)==lattice.point_matching(q_matdyn,qtilde_dbg,double_check=False)).any() :
         print("some points are not matching between matdyn and ypp outputs")
     # here all the points are the same, in the same order
@@ -68,7 +67,6 @@ def double_grid_driver(QQ,matdyn_freq_file,ypp_matdyn_file,exc_QQ_alpha,exc_beta
         if (QQ==Gamma).all():
             energy_denominators[mu,0] = np.sum([(quad(qt,analytic_fit_params[0]) - exc_QQ_alpha.real + freq_matdyn[iq,mu] )**2 for iq,qt in enumerate(qtilde_dbg)])
             energy_denominators[mu,1] = np.sum([(lin(qt,analytic_fit_params[1]) - exc_QQ_alpha.real + freq_matdyn[iq,mu] )**2 for iq,qt in enumerate(qtilde_dbg)])
-
 
     return(energy_denominators)
 
