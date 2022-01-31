@@ -14,16 +14,16 @@ def renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,Nq,Gkkp_sq):
     nb_b = len(eig_b)
     R_qa = np.zeros((Nq,nb_a),dtype=np.cfloat)
     #
-    print('eig_a',eig_a.real)
-    print('eig_b',eig_b.real)
+    #print('eig_a',eig_a.real)
+    #print('eig_b',eig_b.real)
     for iq1 in range(Nq):
         for alpha in range(nb_a-1):
             dummy_sum=0.
             for mu in range(phfreq_indx[0],phfreq_indx[1]):
                 dummy_sum += np.sum(Gkkp_sq[mu,:,alpha] / (eig_b[:]-eig_a[alpha]+ph_freq[mu])**2)
-                print('ph_freq',ph_freq[mu]**2)
-                print('Gkkp_sq',Gkkp_sq[mu,:2,alpha])
-                print('dummy_sum',dummy_sum)
+                #print('ph_freq',ph_freq[mu]**2)
+                #print('Gkkp_sq',Gkkp_sq[mu,:2,alpha])
+                #print('dummy_sum',dummy_sum)
             R_qa[iq1,alpha] = dummy_sum
     return(1./Nq * R_qa)
 
