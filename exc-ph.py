@@ -59,9 +59,9 @@ def main():
     #Gkkp_sq *= ha2ev**2
     if (Gkkp_sq < 0.).any() :
         sys.exit('Gkkp negative')
-
+    
     eig_a = exc_eigenvalues[:N_exc_alpha]
-    eig_b = exc_eigenvalues[:10]
+    eig_b = exc_eigenvalues[:N_exc_beta]
 
     energy_range = [5.00, 6.00]
     energy_n_steps = 2000
@@ -85,8 +85,8 @@ def main():
     ########################################################################
     #  write response function with first-order dynamical correction
     #
-    energy_denominators = dbg.double_grid_driver([0.,0.,0.],'test_data/matdyn_dbg_Gamma.freq','test_data/o.excitons-1-10-grid5x5',eig_a[0],eig_b,ph_freq)
-    Z_qa = funcs.renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,1,Gkkp_sq[:10],energy_denominators)
+    energy_denominators = dbg.double_grid_driver([0.,0.,0.],'test_data/matdyn_dbg_Gamma.freq','test_data/exc1-23-grid5x5',eig_a[0],eig_b,ph_freq)
+    Z_qa = funcs.renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,1,Gkkp_sq,energy_denominators)
     if (Z_qa.real > 1.).any() :
         #sys.exit('\n ERROR : Renorm factor > 1 \n')
         print(' \n')
