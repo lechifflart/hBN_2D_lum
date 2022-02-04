@@ -59,7 +59,7 @@ def main():
     #Gkkp_sq *= ha2ev**2
     if (Gkkp_sq < 0.).any() :
         sys.exit('Gkkp negative')
-    
+
     eig_a = exc_eigenvalues[:N_exc_alpha]
     eig_b = exc_eigenvalues[:N_exc_beta]
 
@@ -82,15 +82,20 @@ def main():
                 eps_out=(1.- funcs.chi_res_static(omega[i],oscillator_strengths,exc_eigenvalues) )* prefactor
                 file.write(f'{omega_eV[i]} \t {eps_out.real} \t  {eps_out.imag}\n')
 
-    ########################################################################
-    #  write response function with first-order dynamical correction
     #
-    energy_denominators = dbg.double_grid_driver([0.,0.,0.],'test_data/matdyn_dbg_Gamma.freq','test_data/exc1-23-grid5x5',eig_a[0],eig_b,ph_freq)
+    #======================================================================================
+    energy_denominators = dbg.double_grid_driver([0.,0.,0.],'test_data/matdyn_dbg-grid3x3.freq','test_data/exc1-23-grid3x3',eig_a[0],eig_b,ph_freq,phfreq_indx)
     Z_qa = funcs.renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,1,Gkkp_sq,energy_denominators)
     if (Z_qa.real > 1.).any() :
         #sys.exit('\n ERROR : Renorm factor > 1 \n')
         print(' \n')
+    #print(energy_denominators)
+    #======================================================================================
+    #
 
+    ########################################################################
+    # plot phonon-assisted absorption spectrum
+    #
     if args.plot_abs :
         eps_to_plot = np.zeros((energy_n_steps),dtype=np.cfloat)
         eps_stat = np.zeros((energy_n_steps),dtype=np.cfloat)
@@ -120,15 +125,20 @@ def main():
         plt.legend()
         plt.show()
 
+    ########################################################################
+    #  write response function with first-order dynamical correction
+    #
     if args.write_dynamic :
         with open('dynamic.dat','w') as file:
            file.write("#E/ev \t EPS-Re \t EPS-Im \n")
            for i in range(energy_n_steps):
-               [eps_out_stat,eps_out_dyn,eps_out_full] = funcs.dielectric_function(omega[i],oscillator_strengths,eig_a,eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa,1,prefactor)
+               [eps_out_stat,eps_out_dyn,eps_out_full] = funcs.dielectric_function(omega[i],oscillator_strengths,eig_a,eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa,1,prefactor,energy_denominators)
                file.write(f'{omega_eV[i]} \t {eps_out_stat.real} \t  {eps_out_stat.imag}\t {eps_out_dyn.real} \t  {eps_out_dyn.imag}\t {eps_out_full.real} \t  {eps_out_full.imag} \n')
 
-
-    T_exc = funcs.excitonic_temperature(5)   # input is in Kelvin
+    ########################################################################
+    # plot phonon-assisted luminescence spectrum
+    #
+    T_exc = funcs.excitonic_temperature(55)   # input is in Kelvin
     if args.plot_lum :
         R0_sp = np.empty(energy_n_steps,dtype=float)
         R_sat_sp = np.empty(energy_n_steps,dtype=float)
@@ -136,14 +146,14 @@ def main():
 
         boltzmann_occ = 1. #funcs.boltzmann(eig_a.real,T_exc, exc_eigenvalues[0].real)
         for w in range(energy_n_steps):
-            eps_0, eps_sat, eps_full = funcs.dielectric_function(omega[w], oscillator_strengths,eig_a,eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa,1,prefactor)
+            eps_0, eps_sat, eps_full = funcs.dielectric_function(omega[w], oscillator_strengths,eig_a,eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa,1,prefactor,energy_denominators)
             refrac = funcs.refrac_index(eps_0)
 
             R0_sp[w] =  funcs.spontaneous_rate(omega[w],eps_0,refrac,boltzmann_occ)
 
             for iq in range(Nq):
                 for mu in range(phfreq_indx[0],phfreq_indx[1]):
-                    sat = funcs.dielectric_function(omega[w] + 2*ph_freq[mu], oscillator_strengths,eig_a,eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa,1,prefactor)[1].imag
+                    sat = funcs.dielectric_function(omega[w] + 2*ph_freq[mu], oscillator_strengths,eig_a,eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa,1,prefactor,energy_denominators)[1].imag
                     R_sat_sp[w] += funcs.satellite_rate(omega[w],sat,refrac,boltzmann_occ,ph_freq[mu],1)
 
             R_full_sp[w] = R0_sp[w] + 1./Nq * R_sat_sp[w]

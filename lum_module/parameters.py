@@ -1,5 +1,6 @@
 broadening = 0.01 /27.211396132 # ha
 Nq = 1 #1296         # nb of q points in the full BZ
+Nqtilde = 25  # nb of points around Gamma in the double grid integration
 
 #################################################################################################
 index_fortran_q = 1     # index of the q point in Fortran indexing, ie starts at 1

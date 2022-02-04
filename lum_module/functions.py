@@ -17,24 +17,24 @@ def renorm_factor(ph_freq,phfreq_indx,eig_a,eig_b,Nq,Gkkp_sq,energy_denominators
     #print('eig_a',eig_a.real)
     #print('eig_b',eig_b.real)
     for iq1 in range(Nq):
-        for alpha in range(nb_a-1):
+        for alpha in range(nb_a):
             dummy_sum=0.
             for mu in range(phfreq_indx[0],phfreq_indx[1]):
                 if not db_grid :
                     dummy_sum += np.sum(Gkkp_sq[mu,:,alpha] / (eig_b[:]-eig_a[alpha]+ph_freq[mu])**2)
                 else :
-                    dummy_sum += np.sum(Gkkp_sq[mu,:,alpha] / energy_denominators[mu,:])
+                    dummy_sum += 1./ Nqtilde * np.sum(Gkkp_sq[mu,:,alpha] / energy_denominators[mu,:])
                 #print('ph_freq',ph_freq[mu]**2)
-                #print('Gkkp_sq',Gkkp_sq[mu,:2,alpha])
-                #print('dummy_sum',dummy_sum)
+                #print('Gkkp_sq',Gkkp_sq[mu,:,alpha])
+                print('dummy_sum',dummy_sum)
             R_qa[iq1,alpha] = dummy_sum
     return(1./Nq * R_qa)
 
-def chi_one_dyn(omega,strength,eig_a,eig_b,ph_freq,phfreq_indx,Gkkp_sq,R_qa,Nq): # first-order correction in the dynamical part of the interaction
-    # arguments : light freq, coupling strength, energies of incoming excitons, " of scattered excitons,exc-ph matrix elmts squared, phonon freqs, renorm_factor, nb of q points
+def chi_one_dyn(omega,strength,eig_a,eig_b,ph_freq,phfreq_indx,Gkkp_sq,R_qa,Nq,energy_denominators,db_grid=True):
+    # first-order correction in the dynamical part of the interaction
+    # arguments : light freq, coupling strength, energies of incoming excitons, " of scattered excitons,exc-ph matrix elmts squared, phonon freqs, renorm_factor, nb of q points, energy denominators computed with double grid integration
     # coupling strength = |T_{0\alpha}|^2
     chi_stat=0.+0.*1j
-    #chi_dyn=0.+0.*1j
     chi=0.+0.*1j
     nb_a = len(eig_a)
     nb_b = len(eig_b)
@@ -44,7 +44,10 @@ def chi_one_dyn(omega,strength,eig_a,eig_b,ph_freq,phfreq_indx,Gkkp_sq,R_qa,Nq):
             chi_stat += abs(strength[alpha])*(1. - R_qa[iq1,alpha]) / (omega - eig_a[alpha] + 1j*broadening)
             chi_dyn = 0. + 0.*1j
             for mu in range(phfreq_indx[0],phfreq_indx[1]):
-                chi_dyn += 1./Nq *abs(strength[alpha]) * np.sum(Gkkp_sq[mu,:,alpha] / (eig_b - eig_a[alpha] + ph_freq[mu])**2 / (omega - eig_b - ph_freq[mu] + 1j*broadening) )
+                if not db_grid :
+                    chi_dyn += 1./Nq *abs(strength[alpha]) * np.sum(Gkkp_sq[mu,:,alpha] / (eig_b - eig_a[alpha] + ph_freq[mu])**2 / (omega - eig_b - ph_freq[mu] + 1j*broadening) )
+                else :
+                    chi_dyn += 1./Nq / Nqtilde *abs(strength[alpha]) * np.sum(Gkkp_sq[mu,:,alpha] / energy_denominators[mu,:] / (omega - eig_b - ph_freq[mu] + 1j*broadening))
     chi += chi_stat + chi_dyn
     return(chi_stat,chi_dyn,chi)
 
@@ -68,9 +71,9 @@ def excitonic_temperature(T):
     # output is excitonic temperature in Kelvin
     return((6.67858 + 1.78924 * T))
 
-def dielectric_function(omega, strengths, eig_a, eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa, Nq, prefactor):
+def dielectric_function(omega, strengths, eig_a, eig_b, ph_freq,phfreq_indx, Gkkp_sq, Z_qa, Nq, prefactor,energy_denominators):
     # returns eps_static, eps_dyn, eps_full
     #    == eps_0, eps_sat, eps_full
     [eps_static, eps_dyn, eps_full] = np.asarray(chi_one_dyn(omega,strengths,
-                             eig_a,eig_b,ph_freq,phfreq_indx,Gkkp_sq,Z_qa,1))
+                             eig_a,eig_b,ph_freq,phfreq_indx,Gkkp_sq,Z_qa,1,energy_denominators))
     return(1.-np.asarray([eps_static, eps_dyn, eps_full]) * prefactor)

@@ -7,7 +7,7 @@ import sys
 import matplotlib.pyplot as plt
 np.set_printoptions(threshold=sys.maxsize)
 
-def double_grid_driver(QQ,matdyn_freq_file,ypp_matdyn_file,exc_QQ_alpha,exc_beta,ph_freq):
+def double_grid_driver(QQ,matdyn_freq_file,ypp_matdyn_file,exc_QQ_alpha,exc_beta,ph_freq,phfreq_indx):
     """
     This first version here is to integrate the energy denominators around Q=Gamma with a finer grid (dbg);
     finite Q integration will use db grid too, already started implementing it
@@ -59,10 +59,10 @@ def double_grid_driver(QQ,matdyn_freq_file,ypp_matdyn_file,exc_QQ_alpha,exc_beta
     # here all the points are the same, in the same order
 
     # double grid integration
-    energy_denominators = np.empty([len(ph_freq),len(exc_beta)],dtype=float)
-    for mu in range(len(ph_freq)):
+    energy_denominators = np.zeros([len(ph_freq),len(exc_beta)],dtype=float)
+    for mu in range(phfreq_indx[0],phfreq_indx[1]):
         for beta in range(len(exc_beta)):
-            energy_denominators[mu,beta] =  np.sum((exc_beta_dbg[:,beta] - exc_QQ_alpha.real + freq_matdyn[:,mu])**2) / len(qtilde_dbg)
+            energy_denominators[mu,beta] =  np.sum((exc_beta_dbg[:,beta] - exc_QQ_alpha.real + freq_matdyn[:,mu])**2)
 
         if (QQ==Gamma).all():
             energy_denominators[mu,0] = np.sum([(quad(qt,analytic_fit_params[0]) - exc_QQ_alpha.real + freq_matdyn[iq,mu] )**2 for iq,qt in enumerate(qtilde_dbg)])
@@ -70,4 +70,4 @@ def double_grid_driver(QQ,matdyn_freq_file,ypp_matdyn_file,exc_QQ_alpha,exc_beta
 
     return(energy_denominators)
 
-#double_grid_driver([0.,0.,0.],'test_datamatdyn_dbg.freq/','test_data/o.excitons-1-9_grid9x9',0.2,exc_beta,ph_freq)
+#print(double_grid_driver([0.,0.,0.],'test_data/matdyn_dbg_Gamma.freq/','test_data/exc1-23-grid5x5',0.2,exc_beta,ph_freq))
